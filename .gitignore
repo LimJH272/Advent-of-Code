@@ -1,1 +1,5 @@
-**.ipynb
+**/workings/
+**/inputs/
+**__init__.py
+**.egg-info
+__pycache__/
