@@ -16,7 +16,7 @@ def day3_part1(banks: list[str]) -> int:
 
     return total
 
-def day3_part2() -> int:
+def day3_part2(banks: list[str]) -> int:
     total = 0
 
     for bank in banks:
@@ -44,5 +44,5 @@ if __name__ == '__main__':
     part1_ans = day3_part1(banks)
     print('Part 1:', part1_ans)
 
-    part2_ans = day3_part2()
+    part2_ans = day3_part2(banks)
     print('Part 2:', part2_ans)
