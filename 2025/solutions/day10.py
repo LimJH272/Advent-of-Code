@@ -1,6 +1,7 @@
 from common_functions import read_file
 from time import time
-from sympy import Matrix
+
+from scipy.optimize import linprog
 import numpy as np
 
 def parse_input(raw_input: str):
@@ -74,7 +75,16 @@ def day10_part1(configs: list[list[bool] | list[int] | list[list[int]]]) -> int:
 
 def day10_part2(configs: list[list[bool] | list[int] | list[list[int]]]) -> int:
     total = 0
-        
+
+    for diagram, btns, joltages in configs:
+        c = np.array([1 for _ in range(len(btns))])
+        A = np.array([[int(k in btn) for k in range(len(joltages))] for btn in btns]).T
+        b = np.array(joltages)
+
+        result = linprog(c=c, A_eq=A, b_eq=b, integrality=1, bounds=(0, None))
+        if not result.success:
+            raise Exception('WTF')
+        total += int(result.fun)
 
     return total
 
