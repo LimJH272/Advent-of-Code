@@ -1,6 +1,5 @@
 from common_functions import read_file
 from time import time
-from functools import lru_cache
 
 def parse_input(raw_input: str):
     temp = [line.split(': ') for line in raw_input.split('\n')]
@@ -25,54 +24,23 @@ def day11_part1(nxt: dict[str, list[str]]) -> int:
     return total
 
 def day11_part2(nxt: dict[str, list[str]]) -> int:
-    start = 'svr'
-    target = 'out'
     memo = dict()
 
-    def path_search(curr: str):
-        key = curr[:]
+    # assume no feedback loops
+    def count_paths(curr: str, target: str):
+        key = (curr, target)
         if key in memo:
             return memo[key]
         
-        # last = curr[-1]
-        # if last == target:
-        #     result = 1 if 'dac' in curr and 'fft' in curr else 0
-        #     if result == 1:
-        #         print(curr)
-        #     memo[key] = result
-        #     return result
-        
-        nxt_paths = []
-        for n in nxt.get(curr, []):
-            if n == target:
-                nxt_paths.append([curr, n])
-            else:
-                paths = [[curr] + path for path in path_search(n) if curr not in path]
-                nxt_paths.extend(paths)
-    
-        memo[key] = nxt_paths[:]
-        return nxt_paths[:]
-    
-    # def path_search(start: str, target: str, visited: list[str]) -> int:
-    #     if (start, tuple(visited)) in memo:
-    #         return memo[(start, tuple(visited))]
-        
-    #     if start in visited:
-    #         memo[(start, tuple(visited))] = 0
-    #         return 0
+        result = 1 if curr == target else sum(count_paths(n, target) for n in nxt.get(curr, []))
+        memo[key] = result
+        return result
 
-    #     new_visited = visited + [start]
-    #     if start == target:
-    #         result = 1 if 'dac' in new_visited and 'fft' in new_visited else 0
-    #         memo[(start, tuple(visited))] = result
-    #         return result
-        
-    #     result = sum(path_search(n, target, new_visited[:]) for n in nxt[start])
-    #     memo[(start, tuple(visited))] = result
-    #     return result
-    
-    return len([path for path in path_search(start) if 'dac' in path and 'fft' in path])
-    # return path_search(start, target, [])
+    return (
+        count_paths('svr', 'dac') * count_paths('dac', 'fft') * count_paths('fft', 'out')
+    ) + (
+        count_paths('svr', 'fft') * count_paths('fft', 'dac') * count_paths('dac', 'out')
+    )
 
 if __name__ == '__main__':
     inputs = read_file('../inputs/day11.txt')
